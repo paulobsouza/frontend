@@ -1,0 +1,110 @@
+:root {
+  --primary-color: #007bff;
+  --light-color: #f4f4f4;
+  --dark-color: #333;
+  --card-bg: #fff;
+  --border-radius: 5px;
+  --box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+body {
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+  background-color: var(--light-color);
+  color: var(--dark-color);
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 960px;
+  margin: auto;
+  overflow: hidden;
+  padding: 0 20px;
+}
+
+header {
+  background: var(--primary-color);
+  color: #fff;
+  padding: 1rem 0;
+  text-align: center;
+}
+
+.card {
+  background: var(--card-bg);
+  padding: 20px;
+  margin-top: 20px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: var(--border-radius);
+}
+
+.btn {
+  display: inline-block;
+  background: var(--primary-color);
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  border-radius: var(--border-radius);
+  text-align: center;
+  width: 100%;
+}
+
+.btn:hover {
+  opacity: 0.9;
+}
+
+.btn-delete {
+  background: #dc3545;
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  float: right;
+}
+
+#lista-alimentos li {
+  background: #f9f9f9;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  list-style: none;
+  margin-bottom: 5px;
+}
+
+#lista-alimentos li:last-child {
+  border-bottom: none;
+}
+
+.resultado-final {
+  margin-top: 20px;
+  padding: 15px;
+  background: #e9ecef;
+  border-radius: var(--border-radius);
+}
+.resultado-final h4 {
+  margin-top: 0;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 10px;
+  }
+}
