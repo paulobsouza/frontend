@@ -1,12 +1,12 @@
 class AppController {
   constructor(apiService) {
     this.apiService = apiService;
-    this.formAlimento = document.getElementById("form-alimento");
-    this.formGasto = document.getElementById("form-gasto-calorico");
-    this.listaAlimentosUI = document.getElementById("lista-alimentos");
-    this.resultadoGastoUI = document.getElementById("resultado-gasto-calorico");
-    this.resumoDiarioUI = document.getElementById("resumo-diario");
-  }
+    this.formAlimento = document.getElementById('form-alimento');
+    this.formGasto = document.getElementById('form-gasto-calorico');
+    this.listaAlimentosUI = document.getElementById('lista-alimentos');
+    this.resultadoGastoUI = document.getElementById('resultado-gasto-calorico'); 
+    this.resumoDiarioUI = document.getElementById('resumo-diario');         
+}
 
   init() {
     this.formAlimento.addEventListener(
