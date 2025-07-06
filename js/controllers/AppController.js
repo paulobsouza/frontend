@@ -2,19 +2,65 @@ class AppController {
     constructor(apiService) {
         this.apiService = apiService; 
 
+        this.usdaApiKey = 'lua753nIouKqYip8J8EDfxKM03vGOhQF9eDAqPts'; 
         this.formAlimento = document.getElementById('form-alimento');
         this.formGasto = document.getElementById('form-gasto-calorico');
         this.listaAlimentosUI = document.getElementById('lista-alimentos');
         this.resultadoGastoUI = document.getElementById('resultado-gasto-calorico');
         this.resumoDiarioUI = document.getElementById('resumo-diario');
+        
+        this.btnBuscar = document.getElementById('btn-buscar');
+        this.inputBusca = document.getElementById('busca-alimento');
     }
 
     init() {
         this.formAlimento.addEventListener('submit', this.handleAdicionarAlimento.bind(this));
         this.formGasto.addEventListener('submit', this.handleDefinirMeta.bind(this));
         this.listaAlimentosUI.addEventListener('click', this.handleDeletarAlimento.bind(this));
+        
+        this.btnBuscar.addEventListener('click', this.handleBuscarAlimento.bind(this));
 
         this.carregarEstadoDoServidor();
+    }
+
+    async handleBuscarAlimento() {
+        const termoBusca = this.inputBusca.value.trim();
+        if (!termoBusca) {
+            alert('Por favor, digite um alimento para buscar.');
+            return;
+        }
+
+        const url = `https://api.nal.usda.gov/fdc/v1/foods/search?query=${encodeURIComponent(termoBusca)}&dataType=Foundation,SR%20Legacy&pageSize=1&api_key=${this.usdaApiKey}`;
+
+        try {
+            this.btnBuscar.textContent = 'Buscando...';
+            const response = await fetch(url);
+            if (!response.ok) throw new Error('Não foi possível buscar os dados do alimento.');
+            const data = await response.json();
+
+            if (data.foods && data.foods.length > 0) {
+                const alimentoEncontrado = data.foods[0];
+                const nutrientes = alimentoEncontrado.foodNutrients;
+                
+                const proteinas = nutrientes.find(n => n.nutrientId === 1003)?.value || 0;
+                const gorduras = nutrientes.find(n => n.nutrientId === 1004)?.value || 0;
+                const carboidratos = nutrientes.find(n => n.nutrientId === 1005)?.value || 0;
+
+                document.getElementById('nome').value = alimentoEncontrado.description;
+                document.getElementById('carboidratos').value = carboidratos.toFixed(1);
+                document.getElementById('proteinas').value = proteinas.toFixed(1);
+                document.getElementById('gorduras').value = gorduras.toFixed(1);
+                
+                alert(`Dados de '${alimentoEncontrado.description}' carregados com sucesso!`);
+            } else {
+                alert('Nenhum alimento encontrado com esse nome. Tente usar termos em inglês.');
+            }
+        } catch (error) {
+            console.error('Erro ao buscar na API do USDA:', error);
+            alert('Ocorreu um erro ao buscar os dados. Verifique o console.');
+        } finally {
+             this.btnBuscar.textContent = 'Buscar';
+        }
     }
 
     async carregarEstadoDoServidor() {
@@ -27,9 +73,7 @@ class AppController {
     }
 
     async handleAdicionarAlimento(e) {
-        console.log('Botão Adicionar Alimento foi clicado!');
-        e.preventDefault(); 
-
+        e.preventDefault();
         const nome = document.getElementById('nome').value;
         const carboidratos = document.getElementById('carboidratos').value;
         const proteinas = document.getElementById('proteinas').value;
@@ -37,7 +81,6 @@ class AppController {
 
         try {
             const novoEstado = await this.apiService.addAlimento({ nome, carboidratos, proteinas, gorduras });
-            
             this.renderizarTudo(novoEstado);
             this.formAlimento.reset();
         } catch (error) {
