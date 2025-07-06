@@ -103,6 +103,22 @@ header {
   margin-top: 0;
 }
 
+.busca-wrapper {
+    display: flex;
+}
+.btn-busca {
+    background: #28a745; 
+    color: white;
+    border: none;
+    padding: 0 15px;
+    margin-left: 10px;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+}
+.btn-busca:hover {
+    opacity: 0.9;
+}
+
 @media (max-width: 768px) {
   .container {
     padding: 0 10px;
