@@ -30,13 +30,6 @@ async handleBuscarAlimento() {
         return;
     }
 
-    console.log('Iniciando busca pelo termo:', termoBusca);
-
-    if (this.usdaApiKey === 'lua753nIouKqYip8J8EDfxKM03vGOhQF9eDAqPts') {
-        alert('ERRO: Por favor, insira sua chave de API do USDA no arquivo AppController.js');
-        return;
-    }
-
     const url = `https://api.nal.usda.gov/fdc/v1/foods/search?query=${encodeURIComponent(termoBusca)}&dataType=Foundation,SR%20Legacy&pageSize=1&api_key=${this.usdaApiKey}`;
     
     console.log('Buscando na URL:', url);
@@ -45,10 +38,7 @@ async handleBuscarAlimento() {
         this.btnBuscar.textContent = 'Buscando...';
         const response = await fetch(url);
         
-        console.log('Resposta da API (bruta):', response);
-
         if (!response.ok) {
-            console.error('A resposta da rede não foi OK. Status:', response.status);
             throw new Error(`Erro da API: ${response.statusText} (Status: ${response.status})`);
         }
         
@@ -57,18 +47,24 @@ async handleBuscarAlimento() {
 
         if (data.foods && data.foods.length > 0) {
             const alimentoEncontrado = data.foods[0];
-            const nutrientes = alimentoEncontrado.foodNutrients;
-            
-            const proteinas = nutrientes.find(n => n.nutrientId === 1003)?.value || 0;
-            const gorduras = nutrientes.find(n => n.nutrientId === 1004)?.value || 0;
-            const carboidratos = nutrientes.find(n => n.nutrientId === 1005)?.value || 0;
 
-            document.getElementById('nome').value = alimentoEncontrado.description;
-            document.getElementById('carboidratos').value = carboidratos.toFixed(1);
-            document.getElementById('proteinas').value = proteinas.toFixed(1);
-            document.getElementById('gorduras').value = gorduras.toFixed(1);
-            
-            alert(`Dados de '${alimentoEncontrado.description}' carregados!`);
+            if (alimentoEncontrado && Array.isArray(alimentoEncontrado.foodNutrients)) {
+                const nutrientes = alimentoEncontrado.foodNutrients;
+                
+                const proteinas = nutrientes.find(n => n.nutrientId === 1003)?.value || 0;
+                const gorduras = nutrientes.find(n => n.nutrientId === 1004)?.value || 0;
+                const carboidratos = nutrientes.find(n => n.nutrientId === 1005)?.value || 0;
+                document.getElementById('nome').value = alimentoEncontrado.description;
+                document.getElementById('carboidratos').value = carboidratos.toFixed(1);
+                document.getElementById('proteinas').value = proteinas.toFixed(1);
+                document.getElementById('gorduras').value = gorduras.toFixed(1);
+                
+                alert(`Dados de '${alimentoEncontrado.description}' carregados!`);
+            } else {
+                alert(`O alimento '${alimentoEncontrado.description}' foi encontrado, mas não contém dados detalhados de macronutrientes nesta fonte. Por favor, preencha manualmente.`);
+                document.getElementById('nome').value = alimentoEncontrado.description;
+            }
+
         } else {
             alert('Nenhum alimento encontrado com esse nome. Tente usar termos em inglês.');
         }
@@ -79,6 +75,7 @@ async handleBuscarAlimento() {
     } finally {
          this.btnBuscar.textContent = 'Buscar';
     }
+}
 }
 
     async handleDefinirMeta(e) {
