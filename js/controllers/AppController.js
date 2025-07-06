@@ -35,6 +35,7 @@ class AppController {
   }
 
   async handleAdicionarAlimento(e) {
+    console.log('Botão Adicionar Alimento foi clicado!');
     e.preventDefault();
     const nome = document.getElementById("nome").value;
     const carboidratos = document.getElementById("carboidratos").value;
