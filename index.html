@@ -39,25 +39,29 @@
         </div>
       </section>
 
-      <section class="card">
-        <h2>Estimativa de Gasto Calórico Diário</h2>
-        <form id="form-gasto-calorico">
-          <div class="form-group">
+     <section class="card">
+    <h2>Estimativa de Gasto Calórico Diário</h2>
+    <form id="form-gasto-calorico">
+        <div class="form-group">
             <label for="peso">Seu Peso (Kg):</label>
-            <input type="number" id="peso" step="0.1" required />
-          </div>
-          <div class="form-group">
+            <input type="number" id="peso" step="0.1" required>
+        </div>
+        <div class="form-group">
             <label for="objetivo">Seu Objetivo:</label>
             <select id="objetivo" required>
-              <option value="" disabled selected>Selecione...</option>
-              <option value="ganho-massa">Ganho de Massa</option>
-              <option value="perda-peso">Perda de Peso</option>
+                <option value="" disabled selected>Selecione...</option>
+                <option value="ganho-massa">Ganho de Massa</option>
+                <option value="perda-peso">Perda de Peso</option>
             </select>
-          </div>
-          <button type="submit" class="btn">Calcular Gasto</button>
-        </form>
-        <div id="resultado-gasto-calorico" class="resultado-final"></div>
-      </section>
+        </div>
+        <button type="submit" class="btn">Calcular e Definir Meta</button>
+    </form>
+
+    <div id="resumo-diario-container">
+        <div id="resultado-gasto-calorico" class="resultado-inicial"></div>
+        <div id="resumo-diario" class="resultado-final"></div>
+    </div>
+</section>
     </main>
 
     <script src="js/models/Alimento.js"></script>
