@@ -9,7 +9,7 @@ class AppController {
         this.resultadoGastoUI = document.getElementById('resultado-gasto-calorico');
         this.resumoDiarioUI = document.getElementById('resumo-diario');
         
-        this.btnBuscar = document.getElementById('btn-buscar');
+        this.btnBuscar = document.getElementById('btn-busca');
         this.inputBusca = document.getElementById('busca-alimento');
     }
 
