@@ -45,37 +45,29 @@
     </form>
     </section>
 
-       <section class="card">
-    <h2>Calcular Calorias por Alimento</h2>
-    
-    <div class="form-group" id="busca-container">
-        <label for="busca-alimento">Buscar Alimento na Base de Dados (em inglês):</label>
-        <div class="busca-wrapper">
-            <input type="text" id="busca-alimento" placeholder="Ex: apple, banana, chicken breast">
-            <button type="button" id="btn-buscar" class="btn-busca">Buscar</button>
-        </div>
-    </div>
-    <hr>
-    <form id="form-alimento">
-        <div class="form-group">
-            <label for="nome">Nome do Alimento:</label>
-            <input type="text" id="nome" required>
-        </div>
-        <div class="form-group">
-            <label for="carboidratos">Carboidratos (g) / 100g:</label>
-            <input type="number" id="carboidratos" step="0.1" required>
-        </div>
-        <div class="form-group">
-            <label for="proteinas">Proteínas (g) / 100g:</label>
-            <input type="number" id="proteinas" step="0.1" required>
-        </div>
-        <div class="form-group">
-            <label for="gorduras">Gorduras (g) / 100g:</label>
-            <input type="number" id="gorduras" step="0.1" required>
-        </div>
-        <button type="submit" class="btn">Adicionar e Calcular</button>
-    </form>
-    </section>
+        <section class="card">
+            <h2>Estimativa de Gasto Calórico Diário</h2>
+            <form id="form-gasto-calorico">
+                <div class="form-group">
+                    <label for="peso">Seu Peso (Kg):</label>
+                    <input type="number" id="peso" step="0.1" required>
+                </div>
+                <div class="form-group">
+                    <label for="objetivo">Seu Objetivo:</label>
+                    <select id="objetivo" required>
+                        <option value="" disabled selected>Selecione...</option>
+                        <option value="ganho-massa">Ganho de Massa</option>
+                        <option value="perda-peso">Perda de Peso</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn">Calcular e Definir Meta</button>
+            </form>
+
+            <div id="resumo-diario-container">
+                <div id="resultado-gasto-calorico" class="resultado-inicial"></div>
+                <div id="resumo-diario" class="resultado-final"></div>
+            </div>
+        </section>
     </main>
     <script src="js/services/ApiService.js"></script>
     <script src="js/models/Alimento.js"></script>
