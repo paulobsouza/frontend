@@ -76,11 +76,21 @@ async buscarDetalhesDoAlimento(fdcId) {
     try {
         const response = await fetch(url);
         const alimento = await response.json();
+        function formatarValor(valor) {
+            return (typeof valor === 'number' && !isNaN(valor)) ? valor.toFixed(1) : 'N/D';
+        }
 
-        const nutrientes = alimento.foodNutrients || [];
-        const proteinas = nutrientes.find(n => n.nutrientId === 1003)?.value || 0;
-        const gorduras = nutrientes.find(n => n.nutrientId === 1004)?.value || 0;
-        const carboidratos = nutrientes.find(n => n.nutrientId === 1005)?.value || 0;
+        const c = nutrientes.find(n => n.nutrientId === 1005)?.value;
+        const p = nutrientes.find(n => n.nutrientId === 1003)?.value;
+        const g = nutrientes.find(n => n.nutrientId === 1004)?.value;
+
+        document.getElementById('carboidratos').value = formatarValor(c);
+        document.getElementById('proteinas').value = formatarValor(p);
+        document.getElementById('gorduras').value = formatarValor(g);
+
+        if (c == null && p == null && g == null) {
+            alert('O alimento foi encontrado, mas não possui dados nutricionais disponíveis.');
+        }
 
         document.getElementById('nome').value = alimento.description;
         document.getElementById('carboidratos').value = carboidratos.toFixed(1);
