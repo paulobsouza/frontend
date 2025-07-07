@@ -23,15 +23,15 @@ class AppController {
         this.carregarEstadoDoServidor();
     }
 
-    async handleBuscarAlimento() {
-    const termoBusca = this.inputBusca.value.trim();
+   async handleBuscarAlimento() {
+    const termoBusca = this.inputBusca.value.trim().toLowerCase();
     if (!termoBusca) {
         alert('Por favor, digite um alimento para buscar.');
         return;
     }
 
     const dataTypes = ['Foundation', 'SR Legacy'];
-    const url = `https://api.nal.usda.gov/fdc/v1/foods/search?query=${encodeURIComponent(termoBusca)}&dataType=${encodeURIComponent(dataTypes.join(','))}&pageSize=1&api_key=${this.usdaApiKey}`;
+    const url = `https://api.nal.usda.gov/fdc/v1/foods/search?query=${encodeURIComponent(termoBusca)}&dataType=${encodeURIComponent(dataTypes.join(','))}&pageSize=10&api_key=${this.usdaApiKey}`;
 
     try {
         this.btnBuscar.textContent = 'Buscando...';
@@ -47,7 +47,8 @@ class AppController {
         console.log('Resposta completa da API USDA:', data);
 
         if (data.foods && data.foods.length > 0) {
-            const alimentoEncontrado = data.foods[0];
+            const alimentoEncontrado = data.foods.find(f => f.description.toLowerCase().includes(termoBusca)) || data.foods[0];
+
             const nutrientes = alimentoEncontrado.foodNutrients;
 
             if (Array.isArray(nutrientes) && nutrientes.length > 0) {
@@ -79,7 +80,6 @@ class AppController {
     }
 }
 
-    
     async carregarEstadoDoServidor() {
         try {
             const estado = await this.apiService.getState();
