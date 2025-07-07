@@ -35,48 +35,63 @@ class AppController {
 
     try {
         this.btnBuscar.textContent = 'Buscando...';
-
         const response = await fetch(url);
-
-        if (!response.ok) {
-            throw new Error(`Erro da API do USDA: ${response.status} ${response.statusText}`);
-        }
-
         const data = await response.json();
 
-        console.log('Resposta completa da API USDA:', data);
-
         if (data.foods && data.foods.length > 0) {
-            const alimentoEncontrado = data.foods.find(f => f.description.toLowerCase().includes(termoBusca)) || data.foods[0];
-
-            const nutrientes = alimentoEncontrado.foodNutrients;
-
-            if (Array.isArray(nutrientes) && nutrientes.length > 0) {
-                const proteinas = nutrientes.find(n => n.nutrientId === 1003)?.value || 0;
-                const gorduras = nutrientes.find(n => n.nutrientId === 1004)?.value || 0;
-                const carboidratos = nutrientes.find(n => n.nutrientId === 1005)?.value || 0;
-
-                document.getElementById('nome').value = alimentoEncontrado.description || '';
-                document.getElementById('carboidratos').value = carboidratos.toFixed(1);
-                document.getElementById('proteinas').value = proteinas.toFixed(1);
-                document.getElementById('gorduras').value = gorduras.toFixed(1);
-
-                alert(`Dados de '${alimentoEncontrado.description}' carregados!`);
-            } else {
-                alert(`O alimento '${alimentoEncontrado.description}' foi encontrado, mas não possui dados detalhados de nutrientes.`);
-                document.getElementById('nome').value = alimentoEncontrado.description || '';
-                document.getElementById('carboidratos').value = '';
-                document.getElementById('proteinas').value = '';
-                document.getElementById('gorduras').value = '';
-            }
+            this.exibirModalSelecao(data.foods);
         } else {
-            alert('Nenhum alimento encontrado. Tente usar termos em inglês ou mais específicos.');
+            alert('Nenhum alimento encontrado.');
         }
     } catch (error) {
-        console.error('Erro detalhado ao buscar alimento na USDA:', error);
-        alert(`Erro ao buscar alimento: ${error.message}`);
+        console.error('Erro ao buscar alimentos:', error);
+        alert('Erro ao buscar alimento.');
     } finally {
         this.btnBuscar.textContent = 'Buscar';
+    }
+}
+
+exibirModalSelecao(foodArray) {
+    const modal = document.getElementById('modal-selecao');
+    const lista = document.getElementById('lista-opcoes');
+    const fecharBtn = document.getElementById('fechar-modal');
+
+    lista.innerHTML = ''; 
+
+    foodArray.forEach(food => {
+        const li = document.createElement('li');
+        li.textContent = food.description;
+        li.addEventListener('click', () => this.buscarDetalhesDoAlimento(food.fdcId));
+        lista.appendChild(li);
+    });
+
+    fecharBtn.onclick = () => modal.classList.add('hidden');
+    modal.classList.remove('hidden');
+}
+
+async buscarDetalhesDoAlimento(fdcId) {
+    const modal = document.getElementById('modal-selecao');
+    const url = `https://api.nal.usda.gov/fdc/v1/food/${fdcId}?api_key=${this.usdaApiKey}`;
+
+    try {
+        const response = await fetch(url);
+        const alimento = await response.json();
+
+        const nutrientes = alimento.foodNutrients || [];
+        const proteinas = nutrientes.find(n => n.nutrientId === 1003)?.value || 0;
+        const gorduras = nutrientes.find(n => n.nutrientId === 1004)?.value || 0;
+        const carboidratos = nutrientes.find(n => n.nutrientId === 1005)?.value || 0;
+
+        document.getElementById('nome').value = alimento.description;
+        document.getElementById('carboidratos').value = carboidratos.toFixed(1);
+        document.getElementById('proteinas').value = proteinas.toFixed(1);
+        document.getElementById('gorduras').value = gorduras.toFixed(1);
+
+        modal.classList.add('hidden');
+        alert(`Dados de '${alimento.description}' carregados!`);
+    } catch (error) {
+        console.error('Erro ao buscar detalhes do alimento:', error);
+        alert('Erro ao carregar dados do alimento.');
     }
 }
 
