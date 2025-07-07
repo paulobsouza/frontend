@@ -124,3 +124,18 @@ header {
     padding: 0 10px;
   }
 }
+
+.lista-alimentos {
+  list-style: none;
+  padding: 0;
+  margin-top: 1em;
+}
+
+.lista-alimentos li {
+  padding: 0.5em;
+  border-bottom: 1px solid #ccc;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
