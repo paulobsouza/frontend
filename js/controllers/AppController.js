@@ -47,7 +47,11 @@ class AppController {
         console.log('Resposta completa da API USDA:', data);
 
         if (data.foods && data.foods.length > 0) {
-            const alimentoEncontrado = data.foods.find(f => f.description.toLowerCase().includes(termoBusca)) || data.foods[0];
+            const alimentoEncontrado = if (data.foods && data.foods.length > 0) {
+                this.exibirModalSelecao(data.foods);
+            } else {
+                alert('Nenhum alimento encontrado. Tente usar termos em inglês ou mais específicos.');
+            }
 
             const nutrientes = alimentoEncontrado.foodNutrients;
 
@@ -80,6 +84,44 @@ class AppController {
     }
 }
 
+exibirModalSelecao(opcoes) {
+    const modal = document.getElementById('modal-selecao');
+    const lista = document.getElementById('lista-opcoes');
+    const close = modal.querySelector('.close-modal');
+
+    lista.innerHTML = '';
+
+    opcoes.forEach((item, index) => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+            <button data-index="${index}" style="margin: 4px 0; width: 100%;">
+                ${item.description}
+            </button>
+        `;
+        lista.appendChild(li);
+    });
+
+    lista.querySelectorAll('button').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            const idx = parseInt(e.target.dataset.index);
+            const alimento = opcoes[idx];
+            await this.preencherFormularioComAlimento(alimento);
+            modal.style.display = 'none';
+        });
+    });
+
+    close.onclick = () => {
+        modal.style.display = 'none';
+    };
+
+    window.onclick = (e) => {
+        if (e.target == modal) {
+            modal.style.display = 'none';
+        }
+    };
+
+    modal.style.display = 'block';
+}
     async carregarEstadoDoServidor() {
         try {
             const estado = await this.apiService.getState();
@@ -104,6 +146,23 @@ class AppController {
         }
     }
 
+    async preencherFormularioComAlimento(alimento) {
+        const response = await fetch(`https://api.nal.usda.gov/fdc/v1/food/${alimento.fdcId}?api_key=${this.usdaApiKey}`);
+        const detalhes = await response.json();
+    
+        const nutrientes = detalhes.foodNutrients;
+    
+        const proteinas = nutrientes.find(n => n.nutrientId === 1003)?.value || 0;
+        const gorduras = nutrientes.find(n => n.nutrientId === 1004)?.value || 0;
+        const carboidratos = nutrientes.find(n => n.nutrientId === 1005)?.value || 0;
+    
+        document.getElementById('nome').value = detalhes.description || '';
+        document.getElementById('carboidratos').value = carboidratos.toFixed(1);
+        document.getElementById('proteinas').value = proteinas.toFixed(1);
+        document.getElementById('gorduras').value = gorduras.toFixed(1);
+    
+        alert(`Dados de '${detalhes.description}' carregados!`);
+    }
     async handleDeletarAlimento(e) {
         if (e.target.classList.contains('btn-delete')) {
             const id = parseInt(e.target.dataset.id);
@@ -115,7 +174,6 @@ class AppController {
             }
         }
     }
-
     async handleDefinirMeta(e) {
         e.preventDefault();
         const peso = document.getElementById('peso').value;
