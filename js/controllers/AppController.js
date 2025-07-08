@@ -71,15 +71,12 @@ class AppController {
                 document.getElementById('proteinas').value = '';
                 document.getElementById('gorduras').value = '';
             }
-        } else {
-            alert('Nenhum alimento encontrado. Tente usar termos em inglês ou mais específicos.');
-        }
-    } catch (error) {
-        console.error('Erro detalhado ao buscar alimento na USDA:', error);
-        alert(`Erro ao buscar alimento: ${error.message}`);
-    } finally {
-        this.btnBuscar.textContent = 'Buscar';
-    }
+        } catch (error) {
+            console.error('Erro detalhado ao buscar alimento na USDA:', error);
+            alert(`Erro ao buscar alimento: ${error.message}`);
+        } finally {
+            this.btnBuscar.textContent = 'Buscar';
+        }    
 }
 
 exibirModalSelecao(opcoes) {
