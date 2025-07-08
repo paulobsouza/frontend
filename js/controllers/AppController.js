@@ -47,12 +47,10 @@ class AppController {
         console.log('Resposta completa da API USDA:', data);
 
         if (data.foods && data.foods.length > 0) {
-            const alimentoEncontrado = if (data.foods && data.foods.length > 0) {
-                this.exibirModalSelecao(data.foods);
-            } else {
-                alert('Nenhum alimento encontrado. Tente usar termos em inglês ou mais específicos.');
-            }
-
+            const alimentoEncontrado = this.exibirModalSelecao(data.foods);
+        } else {
+            alert('Nenhum alimento encontrado. Tente usar termos em inglês ou mais específicos.');
+        }
             const nutrientes = alimentoEncontrado.foodNutrients;
 
             if (Array.isArray(nutrientes) && nutrientes.length > 0) {
