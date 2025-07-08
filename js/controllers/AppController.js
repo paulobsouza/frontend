@@ -73,7 +73,6 @@ class AppController {
             }
         } catch (error) {
             console.error('Erro detalhado ao buscar alimento na USDA:', error);
-            alert(`Erro ao buscar alimento: ${error.message}`);
         } finally {
             this.btnBuscar.textContent = 'Buscar';
         }    
@@ -141,23 +140,36 @@ exibirModalSelecao(opcoes) {
         }
     }
 
-    async preencherFormularioComAlimento(alimento) {
+   async preencherFormularioComAlimento(alimento) {
+    try {
         const response = await fetch(`https://api.nal.usda.gov/fdc/v1/food/${alimento.fdcId}?api_key=${this.usdaApiKey}`);
+        if (!response.ok) throw new Error(`Erro ao buscar detalhes do alimento: ${response.status}`);
+
         const detalhes = await response.json();
-    
-        const nutrientes = detalhes.foodNutrients;
-    
-        const proteinas = nutrientes.find(n => n.nutrientId === 1003)?.value || 0;
-        const gorduras = nutrientes.find(n => n.nutrientId === 1004)?.value || 0;
-        const carboidratos = nutrientes.find(n => n.nutrientId === 1005)?.value || 0;
-    
+        const nutrientes = detalhes.foodNutrients || [];
+
+        console.log('Detalhes completos do alimento:', detalhes); 
+
+        const getValor = (id) => {
+            const nutr = nutrientes.find(n => n.nutrient?.id === id || n.nutrientId === id);
+            return nutr?.amount || nutr?.value || 0;
+        };
+
+        const proteinas = getValor(1003);
+        const gorduras = getValor(1004);
+        const carboidratos = getValor(1005);
+
         document.getElementById('nome').value = detalhes.description || '';
         document.getElementById('carboidratos').value = carboidratos.toFixed(1);
         document.getElementById('proteinas').value = proteinas.toFixed(1);
         document.getElementById('gorduras').value = gorduras.toFixed(1);
-    
+
         alert(`Dados de '${detalhes.description}' carregados!`);
+    } catch (error) {
+        console.error('Erro ao carregar detalhes do alimento:', error);
+        alert('Erro ao carregar os dados completos do alimento.');
     }
+}
     async handleDeletarAlimento(e) {
         if (e.target.classList.contains('btn-delete')) {
             const id = parseInt(e.target.dataset.id);
